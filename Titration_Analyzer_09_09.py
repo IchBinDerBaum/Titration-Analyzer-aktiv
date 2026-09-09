@@ -1,3 +1,4 @@
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 import numpy as np
@@ -95,6 +96,9 @@ class TitrationAnalyzerApp:
         self.root.title("Titration Analyzer")
         self.root.state('zoomed')
 
+        # --- NEU: Klick auf das X abfangen ---
+        self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
+
         self.paned_window = tk.PanedWindow(root, orient=tk.HORIZONTAL, sashwidth=4, bg="#cccccc")
         self.paned_window.pack(fill=tk.BOTH, expand=True)
 
@@ -107,6 +111,13 @@ class TitrationAnalyzerApp:
 
         self.setup_sidebar()
         self.setup_plot_area()
+
+    def on_closing(self):
+        """Beendet das Programm sauber und killt alle Hintergrundprozesse."""
+        plt.close('all')      # Schließt alle unsichtbaren Matplotlib-Graphen
+        self.root.quit()      # Stoppt die Tkinter-Hauptschleife
+        self.root.destroy()   # Zerstört das Fenster
+        sys.exit()            # Beendet den Python-Prozess komplett
 
     def setup_sidebar(self):
         ctrl = ttk.Frame(self.sidebar); ctrl.pack(fill=tk.X, pady=5)
@@ -146,7 +157,7 @@ class TitrationAnalyzerApp:
         if len(self.notebook.tabs()) > 1: self.notebook.forget("current")
 
     # ------------------------------------------------------------------ #
-    #  NEU: Berechnung der Halbäquivalenzpunkte                           #
+    #  NEU: Berechnung der Halbäquivalenzpunkte                          #
     # ------------------------------------------------------------------ #
     def find_half_equivalence_points(self, x, y, peak_indices):
         """
