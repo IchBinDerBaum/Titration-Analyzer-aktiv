@@ -215,7 +215,7 @@ def build_plotly(data, show_aep, show_haep, comma, xlabel):
             fig.add_trace(go.Scatter(
                 x=[pk["v"] for pk in cv["peaks"]],
                 y=[pk["d"] if deriv else pk["ph"] for pk in cv["peaks"]],
-                text=[fnum(pk["v"], 2, comma) for pk in cv["peaks"]],
+                text=[fnum(pk["v"], 3, comma) for pk in cv["peaks"]],
                 mode="markers+text", textposition="middle right",
                 name="Äquivalenzpunkt", legendgroup="aep", showlegend=once("aep"),
                 marker=dict(color="black", size=11, symbol="cross"),
@@ -226,11 +226,11 @@ def build_plotly(data, show_aep, show_haep, comma, xlabel):
             fig.add_trace(go.Scatter(
                 x=[h[0] for h in cv["half"]],
                 y=[h[3] if deriv else h[1] for h in cv["half"]],
-                text=[fnum(h[0], 2, comma) for h in cv["half"]],
+                text=[fnum(h[0], 3, comma) for h in cv["half"]],
                 mode="markers+text", textposition="bottom right",
                 name="Halbäquivalenzpunkt", legendgroup="haep", showlegend=once("haep"),
                 marker=dict(color="black", size=9, symbol="x"),
-                hovertemplate="HÄP: V = %{x:.2f} mL<br>%{y:.3f}<extra></extra>",
+                hovertemplate="HÄP: V = %{x:.3f} mL<br>%{y:.3f}<extra></extra>",
             ), row=r, col=c)
 
     fig.update_xaxes(title_text=xlabel, gridcolor="#e5e5e5", griddash="dash")
@@ -272,7 +272,7 @@ def draw_panel(ax, key, data, opts):
             yv = pk["d"] if deriv else pk["ph"]
             ax.axvline(pk["v"], color="gray", linestyle="-", linewidth=0.8, alpha=0.7, zorder=1)
             ax.plot(pk["v"], yv, marker="+", color="black", mew=1.5, ms=10, zorder=6)
-            ax.text(pk["v"] + 0.2, yv, fnum(pk["v"], 2, comma), fontsize=8)
+            ax.text(pk["v"] + 0.2, yv, fnum(pk["v"], 3, comma), fontsize=8)
 
     if opts["show_haep"]:
         y_range = np.max(y) - np.min(y)
@@ -490,7 +490,7 @@ def log_text(data, show_aep, show_haep, comma):
             lines += [f"  V: {fnum(p['v'], 3, comma)} ml | pH: {fnum(p['ph'], 3, comma)}" for p in cv["peaks"]]
         if show_haep:
             lines.append("  -- Halbäquivalenzpunkte --")
-            lines += [f"  V: {fnum(h[0], 2, comma)} ml | pH: {fnum(h[1], 2, comma)}" for h in cv["half"]]
+            lines += [f"  V: {fnum(h[0], 3, comma)} ml | pH: {fnum(h[1], 3, comma)}" for h in cv["half"]]
     lines.append("=" * 25)
     return "\n".join(lines)
 
@@ -503,7 +503,7 @@ def result_table(data, show_aep, show_haep, comma):
             rows += [{"Methode": label, "Punkt": f"ÄP {i}", "V [mL]": fnum(p["v"], 3, comma), "pH": fnum(p["ph"], 3, comma)}
                      for i, p in enumerate(cv["peaks"], 1)]
         if show_haep:
-            rows += [{"Methode": label, "Punkt": f"HÄP {i}", "V [mL]": fnum(h[0], 2, comma), "pH": fnum(h[1], 2, comma)}
+            rows += [{"Methode": label, "Punkt": f"HÄP {i}", "V [mL]": fnum(h[0], 3, comma), "pH": fnum(h[1], 3, comma)}
                      for i, h in enumerate(cv["half"], 1)]
     return pd.DataFrame(rows)
 
